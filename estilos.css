@@ -1,0 +1,70 @@
+/*.caja {
+    width: 500px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border: 2px solid #333;
+    border-radius: 10px;
+    text-align: center;
+    margin: 50px auto;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+}*/
+
+/* Estilos para el texto 
+.caja h1 {
+    font-size: 24px;
+    color: #333; 
+    margin: 0;
+}
+*/
+
+/* ////////////////////////////////////////////////////////////// */
+
+/*CARRUSSEL*/
+
+.d-item{
+    height: 700px;
+}
+
+.d-imgs{
+    height: 100%;
+    object-fit: cover;
+
+}
+
+
+/* Contenedor del texto */
+.Carrusel-caption {
+    position: absolute; /* El texto se posiciona de manera absoluta */
+    top: 20%; /* Ajusta la posición vertical (puedes modificar este valor para ajustar mejor el texto) */
+    left: 35%; /* Centrado horizontalmente */
+    transform: translate(-50%, -50%); /* Centra el texto completamente */
+    z-index: 2; /* Trae el texto al frente de la imagen */
+    text-align: center; /* Alinea el texto al centro */
+    color: white; /* Hace el texto blanco para visibilidad */
+  }
+
+  
+  /* Estilos adicionales para los textos */
+  .Carrusel-caption p {
+    margin: 0;
+    margin-top: 1000px; /* Espaciado para el botón */
+  color: white; /* Asegura que el texto sea visible */
+  font-size: 1.5rem; /* Ajusta el tamaño de la fuente */
+  }
+  
+  .Carrusel-caption h1 {
+    
+  font-size: 4rem; /* Ajusta el tamaño del título */
+    margin-top: 530px;
+  
+  }
+  
+  .Carrusel-caption button {
+    margin-top: 500px; /* Espaciado para el botón */
+    border-radius: 0px;
+    text-align: center;
+    display: inline-block;
+    margin-left: -40%;
+    
+  }
+

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--------------Icono de la ventana de la pagina web------------------->
+<link rel="icon" type="image/x-icon" href="../imgss/logo1.png"> 
+<link rel="stylesheet" href="../CSS/stilonosot.css">
+    <title>Nosotros</title>
+</head>
+<body>
+
+       <!-- -------------------------Sección del logo y el menu-------------------------- -->
+    <header>
+     
+        <div class="logo">
+            <a href="../indexfrnk.html"><img src="../imgss/logo1.png" alt="Logo Franklin Inversores"></a>
+        </div>
+       
+        <nav>
+           <ul class="menu">
+               
+               <li>
+                   <a href="#">Acerca de nosotros</a>
+                   <ul class="submenu">
+                       <li><a href="../pag/Nosotros.html">Quienes somos</a></li><!-----EMPLEADO---->
+                       <li><a href="../Pag/Historia.html">Historia</a></li><!---HISTORIA------>
+                   </ul>
+               </li>
+               <li>
+                   <a href="#">Servicios</a>
+                   <ul class="submenu">
+                       <li><a href="../Pag/servicios.html">Servicio Instalación</a></li>
+                   </ul>
+               </li>
+               <li>
+                   <a href="#">Contacto</a>
+                   <ul class="submenu">
+                       <li><a href="#Ubi">información del contacto</a></li>
+                       <li><a href="https://www.google.com/maps/place/Av.+Salvador+Estrella+Sadhal%C3%A1,+51000+Santiago+de+los+Caballeros/@19.4810456,-70.7078664,17z/data=!3m1!4b1!4m6!3m5!1s0x8eb1c5eb5de3c173:0xca07a32f232a11d2!8m2!3d19.4810406!4d-70.7052915!16s%2Fg%2F11gz_lgcy?entry=ttu&g_ep=EgoyMDI0MTAyMS4xIKXMDSoASAFQAw%3D%3D">Ubicación</a></li>
+                   </ul>
+               </li>
+               <li>
+                   <a href="#">Novedades</a>
+                   <ul class="submenu">
+                       <li><a href="../Pag/Novedades.html">Novedades servicio</a></li>
+                   </ul>
+               </li>
+               <li class="user-icon">
+                   <a href="../pag/registropag.html" title="Registrarse">
+                       <img src="../imgss/iconousu.png" alt="Icono de usuario">
+                       
+                   </a>
+               </li>
+           </ul>
+       </nav>
+    </header>
+<!-------------------------Seccion de imagen de encabezado----------------------->
+
+<section class="encabezado-seccion"></section>
+    <div class="titulo-container">
+        <h1 class="titulo-encabezado">Somos Franklin Inversores una empresa<br> dedicada a la instalacion de equipos de seguridad y mantenimiento</h1>
+        <hr>
+    </div>
+    <div class="imagen-encabezado">
+        <img src="../imgss/servi1 (1).jpg" alt="Imagen de Encabezado">
+    </div>
+</section>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const carrusel = document.querySelector('.carrusel-items');
+    const prevBtn = document.querySelector('.prev');
+    const nextBtn = document.querySelector('.next');
+    const itemWidth = carrusel.querySelector('.carrusel-item').offsetWidth;
+    let currentIndex = 0;
+
+    function moveCarrusel(direction) {
+        currentIndex = (currentIndex + direction + 10) % 10;
+        carrusel.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+    }
+
+    prevBtn.addEventListener('click', () => moveCarrusel(-1));
+    nextBtn.addEventListener('click', () => moveCarrusel(1));
+
+    // Mover automáticamente cada 5 segundos
+    setInterval(() => moveCarrusel(1), 5000);
+});
+</script>
+
+
+<!-----------------------------Sección de empleados------------------------------------>
+<section class="empleados">
+    <h2>Nuestro Equipo</h2>
+    <div class="empleados-grid">
+        <div class="empleado-card">
+            <div class="empleado-imagen">
+                <img src="../imgss/empleado1.jpg" alt="Empleado 1">
+                <div class="empleado-nombre">
+                    <p>Maria carmen F.</p>
+                    <p class="empleado-puesto">Técnico de Instalación de Cámaras</p>
+                </div>
+            </div>
+            <p>Experto en la instalación y configuración de sistemas de videovigilancia para hogares y negocios.</p>
+        </div>
+        <div class="empleado-card">
+            <div class="empleado-imagen">
+                <img src="../imgss/empleado2.jpg" alt="Empleado 2">
+                <div class="empleado-nombre">
+                    <p>Jose Rodríguez</p>
+                    <p class="empleado-puesto">Especialista en Inversores</p>
+                </div>
+            </div>
+            <p>Encargada de la instalación y mantenimiento de inversores eléctricos, asegurando un suministro de energía confiable.</p>
+        </div>
+        <div class="empleado-card">
+            <div class="empleado-imagen">
+                <img src="../imgss/empleado3.jpg" alt="Empleado 3">
+                <div class="empleado-nombre">
+                    <p>Carlos Gómez</p>
+                    <p class="empleado-puesto">Técnico de Aires Acondicionados</p>
+                </div>
+            </div>
+            <p>Especialista en la instalación, reparación y mantenimiento de sistemas de aire acondicionado residenciales y comerciales.</p>
+        </div>
+        <div class="empleado-card">
+            <div class="empleado-imagen">
+                <img src="../imgss/empleado4.jpg" alt="Empleado 4">
+                <div class="empleado-nombre">
+                    <p>Angel Martínez</p>
+                    <p class="empleado-puesto">Asesora de Servicio al Cliente</p>
+                </div>
+            </div>
+            <p>Encargada de atender las consultas de los clientes, programar servicios y asegurar la satisfacción del cliente en todos los aspectos.</p>
+        </div>
+    </div>
+</section>
+
+
+
+<!--------------------------------------Footer--------------------------------->
+<footer id="Ubi">
+<div class="container">
+    <div class="footer-content">
+        <div class="footer-logo">
+            <a href="../indexfrnk.html"><img src="../imgss/logo1.png" alt="Logo Franklin Inversores"></a>
+        </div>
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>Franklin Inversores</h3>
+                <p>Acerca de nosotros</p>
+                <p>Servicio</p>
+                <p>Contacto</p>
+                <p>Novedades</p>
+                <div class="social-icons">
+                    <a href="#" class="icon"><img src="../imgss/insta.png" alt="Instagram"></a>
+                    <a href="#" class="icon"><img src="../imgss/face.png" alt="Facebook"></a>
+                    <a href="#" class="icon"><img src="../imgss/correo (1).png" alt="Correo"></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>información del Contacto</h3>
+                <p>809-777-0000</p>
+                <p>franklininversores@gmail.com</p>
+                <p>Direccion:Estrella Salhala</p>
+            </div>
+            <div class="footer-column">
+                <h3>Servicio al cliente</h3>
+                <p>Centro de ayuda</p>
+                <p>Clientes</p>
+                <p>Políticas de Privacidad</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer-map">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.0508890847!2d-70.71062548509435!3d19.45199998687557!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eb1c5c8f3c9c4f3%3A0x6b5a7e2f1c3b8f0a!2sEstrella%20Sadhal%C3%A1%2C%20Santiago%20De%20Los%20Caballeros%2051000%2C%20Dominican%20Republic!5e0!3m2!1sen!2sus!4v1648303512436!5m2!1sen!2sus" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+</div>
+<div class="footer-bottom">
+    <p>&copy; 2024 Franklin Inversores. Todos los derechos reservados. | Última actualización: <span id="lastUpdated"></span></p>
+</div>
+</footer>
+
+<script>
+document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString();
+</script>
+
+
+
+</body>
+</html>

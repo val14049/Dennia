@@ -1,0 +1,326 @@
+/* -------------------------------Estilos generales -------------------------------------*/
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+/*-------------------------------menu general------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: rgba(0,0,0,0.7);
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.logo img {
+  max-height: 50px;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+nav {
+  display: flex;
+}
+
+.menu {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  justify-content: flex-start;
+}
+
+.menu > li {
+  position: relative;
+}
+
+.menu > li > a {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  display: block;
+}
+
+.submenu {
+  display: none;
+  position: absolute;
+  background-color: black;
+  min-width: 150px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.menu > li:hover .submenu {
+  display: block;
+}
+
+.submenu li {
+  list-style-type: none;
+}
+
+.submenu a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.submenu a:hover {
+  background-color: #555;
+}
+
+.menu .user-icon {
+  margin-left: 20px;
+}
+
+.menu .user-icon a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu .user-icon img {
+  width: 40px;
+  height: 40px;
+  margin-right: 100px;
+  margin-top: -15px;
+  filter: invert(1);
+}
+
+
+/* --------------------------Sección de Historia -----------------------------------*/
+.historia {
+  margin-bottom: 50px;
+}
+
+.historia-header {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.historia-header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.historia-contenido {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.historia-contenido h1 {
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.historia-contenido p {
+  font-family: Arial, sans-serif;
+  font-weight: normal;
+  line-height: 1.6;
+}
+
+
+
+/*-------------------------------------------Tercera seccion-------------------------*/
+.tercera-seccion {
+  background-image: url(../imgss/fondo-seccion3.jpg);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  padding: 40px 0; /* Aumentado el padding superior */
+  overflow-x: hidden;
+  color: black;
+}
+
+.contenedor-contenido {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.contenido-texto {
+  text-align: left;
+  margin-bottom: 30px; /* Reducido el margen inferior */
+}
+
+.titulo-principal {
+  font-size: 36px;
+  margin-bottom: 15px; /* Reducido el margen inferior */
+  color: #e7e4e4;
+}
+
+.texto-secundario {
+  font-size: 18px;
+  margin-bottom: 15px; /* Reducido el margen inferior */
+  color: #789fab;
+}
+
+.boton-seguir {
+  background-color: #455d65;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.contenedor-iconos {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px; /* Reducido el margen superior */
+}
+
+.elemento-icono {
+  text-align: center;
+  flex-basis: 30%;
+}
+
+.imagen-redonda {
+  width: 90px; /* Reducido el tamaño */
+  height: 90px; /* Reducido el tamaño */
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 15px; /* Reducido el margen inferior */
+}
+
+.imagen-redonda img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.titulo-icono {
+  font-size: 20px;
+  margin-bottom: 8px; /* Reducido el margen inferior */
+  color: #fff;
+  font-weight: bold; /* Mantenido en negrita */
+}
+
+.descripcion-icono {
+  font-size: 14px;
+  color: #e7e4e4;
+  font-weight: normal; /* Quitado el formato en negrita */
+}
+
+/*------------------------------------- Footer Styles ------------------------------------*/
+
+/* Footer Styles */
+footer {
+  background-color: #455d65;
+  color: white;
+  padding: 28px 1%;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 25px auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-content {
+  width: 70%;
+  display: flex;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  margin-right: 40px;
+}
+
+.footer-logo img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.footer-columns {
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.footer-column {
+  flex: 1;
+}
+
+.footer-column h3 {
+  margin-bottom: 15px;
+}
+
+.footer-column p {
+  margin-bottom: 10px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.footer-map {
+  width: 25%;
+}
+
+.footer-bottom {
+  background-color: rgba(0,0,0,0.1);
+  padding: 10px 0;
+  margin-top: 20px;
+  text-align: center;
+}
+
+
+

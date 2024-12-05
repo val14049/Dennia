@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="../CSS/stylesoli.css">
+
+    <!--------------Icono de la ventana de la pagina web------------------->
+    <link rel="icon" type="image/x-icon" href="../imgss/logo1.png"> 
+</head>
+<body>
+
+        <!-- -------------------------Sección del logo y el menu-------------------------- -->
+    <header>
+     
+        <div class="logo">
+            <a href="../indexfrnk.html"><img src="../imgss/logo1.png" alt="Logo Franklin Inversores"></a>
+        </div>
+       
+        <nav>
+           <ul class="menu">
+               
+               <li>
+                   <a href="#">Acerca de nosotros</a>
+                   <ul class="submenu">
+                       <li><a href="../pag/Nosotros.html">Quienes somos</a></li><!-----EMPLEADO---->
+                       <li><a href="../Pag/Historia.html">Historia</a></li><!---HISTORIA------>
+                   </ul>
+               </li>
+               <li>
+                   <a href="#">Servicios</a>
+                   <ul class="submenu">
+                       <li><a href="../Pag/servicios.html">Servicio Instalación</a></li>
+                   </ul>
+               </li>
+               <li>
+                   <a href="#">Contacto</a>
+                   <ul class="submenu">
+                       <li><a href="#Ubi">información del contacto</a></li>
+                       <li><a href="https://www.google.com/maps/place/Av.+Salvador+Estrella+Sadhal%C3%A1,+51000+Santiago+de+los+Caballeros/@19.4810456,-70.7078664,17z/data=!3m1!4b1!4m6!3m5!1s0x8eb1c5eb5de3c173:0xca07a32f232a11d2!8m2!3d19.4810406!4d-70.7052915!16s%2Fg%2F11gz_lgcy?entry=ttu&g_ep=EgoyMDI0MTAyMS4xIKXMDSoASAFQAw%3D%3D">Ubicación</a></li>
+                   </ul>
+               </li>
+               <li>
+                   <a href="#">Novedades</a>
+                   <ul class="submenu">
+                       <li><a href="../Pag/Novedades.html">Novedades servicio</a></li>
+                   </ul>
+               </li>
+               <li class="user-icon">
+                   <a href="../pag/registropag.html" title="Registrarse">
+                       <img src="../imgss/iconousu.png" alt="Icono de usuario">
+                       
+                   </a>
+               </li>
+           </ul>
+       </nav>
+    </header>
+     <!---------------------------Seccion del carrusel---------------------------------------->
+    
+
+
+<!----------------------------Formulario----------------------------->
+
+    <div class="formulario-caja">
+        <img src="../imgss/logo1.png" alt="Logo de la empresa" class="logo">
+        <h2>Ingresa tus datos</h2>
+        <form id="serviceRequestForm" onsubmit="return enviarFormulario();">
+            <label for="name">Nombre</label>
+            <input type="text" id="name" name="name" required>
+            <label for="name">Apellido</label>
+            <input type="email" id="email" name="email" required>
+            <label for="email">Cedula</label>
+            <input type="text" id="name" name="name" required>
+            <label for="email">Correo Electrónico</label>
+            <input type="email" id="email" name="email" required>
+            <label for="password">Contraseña</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required>
+                <span id="togglePassword" class="toggle-password">&#128065;&#65039;</span>
+            </div>
+            <script>
+                const togglePassword = document.querySelector('#togglePassword');
+                const password = document.querySelector('#password');
+                
+                togglePassword.addEventListener('click', function (e) {
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? '&#128065;&#65039;' : '&#128683;';
+                });
+            </script>
+
+           
+
+            <button type="submit">Enviar Registro</button>
+        </form>
+
+        <p id="confirmación" class="hidden">¡Tu registroha sido enviada con éxito! </p>
+    </div>
+
+    <script>
+        function enviarFormulario() {
+            document.getElementById("confirmationMessage").classList.remove("hidden");
+            return false;
+        }
+    </script>
+
+
+
+
+
+<!--------------------------------------Sexta seccion Footer--------------------------------->
+
+<footer id="Ubi">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a href="../indexfrnk.html"><img src="../imgss/logo1.png" alt="Logo Franklin Inversores"></a>
+            </div>
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>Franklin Inversores</h3>
+                    <p>Acerca de nosotros</p>
+                    <p>Servicio</p>
+                    <p>Contacto</p>
+                    <p>Novedades</p>
+                    <div class="social-icons">
+                        <a href="#" class="icon"><img src="../imgss/insta.png" alt="Instagram"></a>
+                        <a href="#" class="icon"><img src="../imgss/face.png" alt="Facebook"></a>
+                        <a href="#" class="icon"><img src="../imgss/correo (1).png" alt="Email"></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Information</h3>
+                    <p>809-777-0000</p>
+                    <p>franklininversores@gmail.com</p>
+                    <p>Address: Estrella Sadhalá</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Servicio al cliente</h3>
+                    <p>Centro de ayuda</p>
+                    <p>Clientes</p>
+                    <p>Políticas de Privacidad</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-map">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3762.0508890847!2d-70.71062548509435!3d19.45199998687557!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8eb1c5c8f3c9c4f3%3A0x6b5a7e2f1c3b8f0a!2sEstrella%20Sadhal%C3%A1%2C%20Santiago%20De%20Los%20Caballeros%2051000%2C%20Dominican%20Republic!5e0!3m2!1sen!2sus!4v1648303512436!5m2!1sen!2sus" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy;2024 Franklin Inversores. Todos los derechos reservados. | Última actualización:24/10/2024 <span id="lastUpdated"></span></p>
+    </div>
+</footer>
+<script>
+    document.getElementById('ultimaActualizacion').textContent = new Date().toLocaleDateString();
+</script>
+
+</body>
+</html>

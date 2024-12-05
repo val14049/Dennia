@@ -1,0 +1,2189 @@
+//*-------------------------------------------------Codigos de Nathaly para comparar CLIENTES-------------------------------------------------------*/
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManClin01 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvcliregistrados.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Cliente", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvcliregistrados.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+        public frmManClin01()
+        {
+            InitializeComponent();
+        }
+
+        private void frmManClin01_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+
+
+            //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader lector;
+            comando.CommandText = "Select IdCliente from Solicitud where IdCliente = '" + txtid.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if ((lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+            EscribirDatos("Delete from Cliente where IdCliente= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+
+
+        }
+
+        private void lblhora_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void txthora_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvcliregistrados_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            // Este proceso se debe generar
+            txtid.Text = dgvcliregistrados[0, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtnom.Text = dgvcliregistrados[1, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtape.Text = dgvcliregistrados[2, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtdire.Text = dgvcliregistrados[3, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtidpro.Text = dgvcliregistrados[4, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtidzon.Text = dgvcliregistrados[5, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            mtbtell.Text = dgvcliregistrados[6, dgvcliregistrados.SelectedCells[0].RowIndex].Value.ToString();
+
+        }
+
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+
+        private void gpbdatos_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+            if (mtbtell.MaskCompleted == false)
+            {
+                MessageBox.Show("Debes escribir el telefono ", "aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                return;
+            }
+            //Investigo si los textbox tienen datos
+            if (txtnom.Text == "")
+            {
+                MessageBox.Show("Debes digitar el nombre del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtnom.Focus();
+                return;
+            }
+            if (txtape.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Apellido del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtape.Focus();
+                return;
+            }
+            if (txtdire.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Dirección del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtdire.Focus();
+                return;
+            }
+            //Investigo si los textbox tienen datos
+            if (txtidpro.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Identificador de la Provincia", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtidpro.Focus();
+                return;
+            }
+
+
+            //Investigo si el id Provincia esta registrado en la tabla
+            SqlDataReader Lector;
+            comando.CommandText = "Select IdProvincia from Provincia where IdProvincia = '" + txtidpro.Text + "'";
+            conexion.Open();
+            Lector = comando.ExecuteReader(); //devuelve True or False
+            if (!(Lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("Código de Provincia no existente", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                Lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+
+
+            //Investigo si el id zona esta registrado en la tabla
+            SqlDataReader lector;
+            comando.CommandText = "Select IdZona from Zona where IdZona = '" + txtidzon.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if (!(lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("Código de Zona no existente", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Cliente ( Nombre,Apellido, Direccion,IdProvincia, IdZona, Telefono) Values ( '" + txtnom.Text.Trim() + "','" + txtape.Text.Trim() + "','" + txtdire.Text.Trim() + "','" + txtidpro.Text.Trim() + "','" + txtidzon.Text.Trim() + "', '" + mtbtell.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Cliente Set Nombre = '" + txtnom.Text.Trim() + "', Apellido =  '" + txtape.Text.Trim() +
+                 "', Direccion = '" + txtdire.Text.Trim() + "', IdProvincia = '" + txtidpro.Text.Trim() + "', IdZona = '" + txtidzon.Text.Trim() +
+                 "', Telefono = '" + mtbtell.Text.Trim() + "' where IdCliente = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+
+        //Esto va debajo normal 
+        private bool Esnumerico(char caracter)
+        {
+            //para controlar que solo se digiten números
+            //Text shein cuando el texto cambia cuando se invoca la funcion esta envia el codigo
+            //i press para caundo se ingresen datos cuando presiono una tecla este se invocara se hace cuando el campo es numerico
+
+            if ((caracter >= 48 && caracter <= 57) || (caracter == 8) || caracter == 32)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        private void frmManClin01_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtnom.Text = string.Empty;
+            txtape.Text = "";//Forma de Limpiar//
+            txtdire.Text = string.Empty;
+            txtidpro.Text = string.Empty;
+            txtidzon.Text = string.Empty;
+            mtbtell.Text = string.Empty;
+            txtnom.Focus();
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();//Invoco Procedimiento//
+
+        }
+
+        private void maskedTextBox1_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
+
+        }
+
+        private void txtnom_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtdire_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtidpro_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtidzon_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+
+        }
+
+        private void txtidpro_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+
+        }
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar CONTRARTISTA -------------------------------------------------------*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frnManCont05 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvcontratista.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Contratista", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvcontratista.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+
+        public frnManCont05()
+        {
+            InitializeComponent();
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {   //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader lector;
+            comando.CommandText = "Select IdContratista from Contratista_Oficio where IdContratista = '" + txtid.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if ((lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+            EscribirDatos("Delete from Contratista where IdContratista= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+        }
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void frnManCont05_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvcontratista_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Este proceso se debe generar
+            txtid.Text = dgvcontratista[0, dgvcontratista.SelectedCells[0].RowIndex].Value.ToString();
+            txtnomb.Text = dgvcontratista[1, dgvcontratista.SelectedCells[0].RowIndex].Value.ToString();
+            txtdirecc.Text = dgvcontratista[2, dgvcontratista.SelectedCells[0].RowIndex].Value.ToString();
+            mtbtell.Text = dgvcontratista[3, dgvcontratista.SelectedCells[0].RowIndex].Value.ToString();
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+            if (mtbtell.MaskCompleted == false)
+            {
+                MessageBox.Show("Debes escribir el telefono ", "aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                return;
+            }
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Contratista ( Nombre, Direccion, Telefono) Values ( '" + txtnomb.Text.Trim() + "','" + txtdirecc.Text.Trim() + "','" + mtbtell.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Contratista Set Nombre = '" + txtnomb.Text.Trim() + "', Direccion =  '" + txtdirecc.Text.Trim() +
+                 "', Telefono = '" + mtbtell.Text.Trim() + "' where IdContratista = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void frnManCont05_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtnomb.Text = string.Empty;
+            txtdirecc.Text = "";//Forma de Limpiar//
+            mtbtell.Text = string.Empty;
+
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void maskedTextBox1_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        {
+
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar ZONA -------------------------------------------------------*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManZon04 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvzonregistradas.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Zona", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvzonregistradas.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+
+        public frmManZon04()
+        {
+            InitializeComponent();
+        }
+
+        private void gpbdatos_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+            //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader lector;
+            comando.CommandText = "Select IdZona from Cliente where IdZona = '" + txtid.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if ((lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+
+            EscribirDatos("Delete from Zona where IdZona= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+        }
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void frmManZon04_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvzonregistradas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Este proceso se debe generar
+            txtid.Text = dgvzonregistradas[0, dgvzonregistradas.SelectedCells[0].RowIndex].Value.ToString();
+            txtzona.Text = dgvzonregistradas[1, dgvzonregistradas.SelectedCells[0].RowIndex].Value.ToString();
+            txtidmunicipio.Text = dgvzonregistradas[2, dgvzonregistradas.SelectedCells[0].RowIndex].Value.ToString();
+
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+            //Investigo si los textbox tienen datos
+            if (txtzona.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Zona", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtzona.Focus();
+                return;
+            }
+
+            if (txtidmunicipio.Text == "")
+            {
+                MessageBox.Show("Debes digitar el nombre del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtidmunicipio.Focus();
+                return;
+            }
+
+            //Investigo si el id zona esta registrado en la tabla
+            SqlDataReader lector;
+            comando.CommandText = "Select IdMunicipio from Zona where IdMunicipio = '" + txtidmunicipio.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if (!(lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("Código de Municipio no existente", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+
+            //Agregar Nuevo Registro
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Zona ( DescripcionZona,IdMunicipio) Values ( '" + txtzona.Text.Trim() + "','" + txtidmunicipio.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Zona Set DescripcionZona = '" + txtzona.Text.Trim() + "', IdMunicipio =  '" + txtidmunicipio.Text.Trim() + "' where IdZona = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void frmManZon04_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtzona.Text = string.Empty;
+            txtidmunicipio.Text = "";//Forma de Limpiar//
+
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();
+        }
+        private bool Esnumerico(char caracter)
+        {//para controlar que solo se digiten números
+            if ((caracter >= 48 && caracter <= 57) || (caracter == 8) || caracter == 32)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void txtidmunicipio_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+    }
+}
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar ARTICULO -------------------------------------------------------*/
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmMantArt09 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvarticulos.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Articulo", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvarticulos.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+        public frmMantArt09()
+        {
+            InitializeComponent();
+        }
+
+        private void lbltitulo2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+
+
+            EscribirDatos("Delete from Articulo where IdArticulo= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+
+        }
+
+        private void frmMantArt09_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvarticulos_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Este proceso se debe generar
+            txtid.Text = dgvarticulos[0, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+            txtdesc.Text = dgvarticulos[1, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+            txtcosto.Text = dgvarticulos[2, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+            txtprecio.Text = dgvarticulos[3, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+            txtcantex.Text = dgvarticulos[4, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+            txtpunord.Text = dgvarticulos[5, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+            txtidprov.Text = dgvarticulos[6, dgvarticulos.SelectedCells[0].RowIndex].Value.ToString();
+        }
+
+        private void frmMantArt09_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {   //Investigo si los textbox tienen datos
+            if (txtdesc.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Descripcion del Articulo", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtdesc.Focus();
+                return;
+            }
+            if (txtcosto.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Costo del Articulo", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtcosto.Focus();
+                return;
+            }
+            if (txtpunord.Text == "")
+            {
+                MessageBox.Show("Debes digitar el punto de Reorden del Articulo", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtpunord.Focus();
+                return;
+            }
+            if (txtcantex.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Cantidad de Existencia del Articulo", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtcantex.Focus();
+                return;
+            }
+            //Investigo si el id zona esta registrado en la tabla
+            SqlDataReader lector;
+            comando.CommandText = "Select IdProveedor from Proveedor where IdProveedor = '" + txtidprov.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if (!(lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("Codigo de Proveedor no existente", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Articulo ( Descripcion, Costo, Precio,CantidadExistencia, PuntoReOrden, IdProveedor) Values ( '" + txtdesc.Text.Trim() + "','" + txtcosto.Text.Trim() + "','" + txtprecio.Text.Trim() + "','" + txtcantex.Text.Trim() + "','" + txtpunord.Text.Trim() + "', '" + txtidprov.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Articulo set Descripcion '" + txtdesc.Text.Trim() + "', Costo =  '" + txtcosto.Text.Trim() +
+                 "', Precio = '" + txtprecio.Text.Trim() + "', CantidadExistencia= '" + txtcantex.Text.Trim() + "', PuntoReOrden = '" + txtpunord.Text.Trim() +
+                 "', IdProveedor = '" + txtidprov.Text.Trim() + "' where IdArticulo = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtdesc.Text = string.Empty;
+            txtcosto.Text = "";//Forma de Limpiar//
+            txtprecio.Text = string.Empty;
+            txtcantex.Text = string.Empty;
+            txtpunord.Text = string.Empty;
+            txtidprov.Text = string.Empty;
+
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtcosto_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        private bool Esnumerico(char caracter)
+        {//para controlar que solo se digiten números
+            if ((caracter >= 48 && caracter <= 57) || (caracter == 8) || caracter == 32)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void txtcosto_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+
+        private void txtprecio_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+
+        private void txtcantex_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtcantex_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+
+        private void txtpunord_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+
+        private void txtidprov_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtidprov_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
+
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar PROVEEDOR -------------------------------------------------------*/
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManProv010 : Form
+    {
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvproveedores.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Proveedor", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvproveedores.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+        public frmManProv010()
+        {
+            InitializeComponent();
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+            txtid.Clear();
+            txtnomb.Clear();
+            txtcontacto.Clear();
+            mtbtell.Clear();
+        }
+
+        private void frmManProv010_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvproveedores_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtid.Text = dgvproveedores[0, dgvproveedores.SelectedCells[0].RowIndex].Value.ToString();
+            txtnomb.Text = dgvproveedores[0, dgvproveedores.SelectedCells[0].RowIndex].Value.ToString();
+            txtcontacto.Text = dgvproveedores[0, dgvproveedores.SelectedCells[0].RowIndex].Value.ToString();
+            mtbtell.Text = dgvproveedores[0, dgvproveedores.SelectedCells[0].RowIndex].Value.ToString();
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+            //Investigo si los textbox tienen datos
+            if (txtnomb.Text == "")
+            {
+                MessageBox.Show("Debes digitar el nombre del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtnomb.Focus();
+                return;
+            }
+            if (txtcontacto.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Apellido del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtcontacto.Focus();
+                return;
+            }
+            if (mtbtell.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Dirección del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                mtbtell.Focus();
+                return;
+
+
+                //Investigo si el id zona esta registrado en la tabla
+                SqlDataReader lector;
+                comando.CommandText = "Select IdZona from Zona where IdZona = '" + txtid.Text + "'";
+                conexion.Open();
+                lector = comando.ExecuteReader(); //devuelve True or False
+                if (!(lector.Read()))
+                {
+                    conexion.Close();
+                    MessageBox.Show("Codigo de Zona no existente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                    lector.Close();
+
+                    return; //Te saca del procedimiento donde nos encontramos
+                            //Y no ejecuta lo que esta debajo
+                }
+
+                else
+                {
+                    conexion.Close();
+                }
+
+
+
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+
+        }
+
+        private void txtcontacto_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gpbdatos_Enter(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+
+}
+
+
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar PROVINCIA -------------------------------------------------------*/
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+using System.Data.SqlClient; //Para trabajar con SQL
+using System.Threading;
+using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManPro02 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+        private void RefrescarTabla()
+        {
+
+            dvgproregistradas.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Provincia", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dvgproregistradas.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+
+        public frmManPro02()
+        {
+            InitializeComponent();
+        }
+
+        private void lbltitulo2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtnom_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+            //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader lector;
+            comando.CommandText = "Select IdProvincia from Cliente where IdProvincia = '" + txtid.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if ((lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+            EscribirDatos("Delete from Provincia where IdProvincia= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+
+
+        }
+
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void txthora_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void frmManPro02_Load(object sender, EventArgs e)
+        { //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dvgproregistradas_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            {
+                // Este proceso se debe generar
+                txtid.Text = dvgproregistradas[0, dvgproregistradas.SelectedCells[0].RowIndex].Value.ToString();
+                txtdescripcion.Text = dvgproregistradas[1, dvgproregistradas.SelectedCells[0].RowIndex].Value.ToString();
+
+
+            }
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+
+
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Provincia ( Descripcion) Values ( '" + txtdescripcion.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Provicia Set Descrpcion = '" + txtdescripcion.Text.Trim() + "' where IdProvincia = '" + txtid.Text + "'");
+
+            }
+
+
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void frmManPro02_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtdescripcion.Text = string.Empty;
+
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
+
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar OFICIO -------------------------------------------------------*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManOfi07 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvoficio.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Oficio", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvoficio.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+        public frmManOfi07()
+        {
+            InitializeComponent();
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+            //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader lector;
+            comando.CommandText = "Select IdOficio from Contratista_Oficio where IdOficio = '" + txtid.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if ((lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+            EscribirDatos("Delete from Oficio where IdOficio= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+        }
+
+        private void frmManOfi07_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvoficio_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            txtid.Text = dgvoficio[0, dgvoficio.SelectedCells[0].RowIndex].Value.ToString();
+            txtoficio.Text = dgvoficio[1, dgvoficio.SelectedCells[0].RowIndex].Value.ToString();
+
+        }
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtoficio.Text = string.Empty;
+
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void frmManOfi07_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+            if (txtoficio.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Oficio", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtoficio.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Oficio( Descripcion) Values ( '" + txtoficio.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Oficio Set Descripcion = '" + txtoficio.Text.Trim() + "' where IdOficio = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+    }
+}
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar MUNICIPIO -------------------------------------------------------*/
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManMun03 : Form
+    {
+
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvmunregistrados.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Municipio", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvmunregistrados.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+
+        public frmManMun03()
+        {
+            InitializeComponent();
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+
+        {
+
+            EscribirDatos("Delete from Municipio where IdMunicipio= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+        }
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void frmManMun03_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void txthora_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dgvmunregistrados_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {   
+            // Este proceso se debe generar
+            txtid.Text = dgvmunregistrados[0, dgvmunregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtmunicipio.Text = dgvmunregistrados[1, dgvmunregistrados.SelectedCells[0].RowIndex].Value.ToString();
+            txtidpro.Text = dgvmunregistrados[2, dgvmunregistrados.SelectedCells[0].RowIndex].Value.ToString();
+
+
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+
+
+            //Investigo si los textbox tienen datos
+            if (txtmunicipio.Text == "")
+            {
+                MessageBox.Show("Debes digitar el nombre del municipio", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtmunicipio.Focus();
+                return;
+            }
+            if (txtidpro.Text == "")
+            {
+                MessageBox.Show("Debes digitar el nombre del cliente", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtidpro.Focus();
+                return;
+            }
+
+            //Investigo si el id zona esta registrado en la tabla
+            SqlDataReader lector;
+            comando.CommandText = "Select IdProvincia from Provincia where IdProvincia = '" + txtidpro.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if (!(lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("Código de Provincia no existente", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+
+            //Agrego un Registro Nuevo
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+
+                EscribirDatos("Insert into Municipio ( DescripcionMunicipio,IdProvincia) Values ( '" + txtmunicipio.Text.Trim() + "','" + txtidpro.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Municipio Set DescripcionMunicipio = '" + txtmunicipio.Text.Trim() + "', IdProvincia =  '" + txtidpro.Text.Trim() + "' where IdMunicipio = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtmunicipio.Text = string.Empty;
+            txtidpro.Text = "";//Forma de Limpiar//
+
+
+        }
+
+        private void frmManMun03_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void txtidpro_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        private bool Esnumerico(char caracter)
+        {//para controlar que solo se digiten números
+            if ((caracter >= 48 && caracter <= 57) || (caracter == 8) || caracter == 32)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void txtidpro_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+
+            e.Handled = Esnumerico(e.KeyChar);
+
+        }
+    }
+}
+
+
+
+
+
+//*--------------------------------------Codigos de Nathaly para comparar MATERIALESSsERVICIO -------------------------------------------*/
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+
+
+
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManMatS08 : Form
+    {
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvmateriales.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Materiales_Servicio", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvmateriales.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+
+        public frmManMatS08()
+        {
+            InitializeComponent();
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {
+            //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader Lector;
+            comando.CommandText = "Select IdRegistroServicio from Registro_Servicio where IdRegistroServicio = '" + txtid.Text + "'";
+            conexion.Open();
+            Lector = comando.ExecuteReader(); //devuelve True or False
+            if ((Lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                Lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+            EscribirDatos("Delete from Materiales_Servicio where IdRegistroServicio= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+        }
+
+        private void frmManMatS08_Load(object sender, EventArgs e)
+        {
+
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvmateriales_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+            // Este proceso se debe generar
+            txtid.Text = dgvmateriales[0, dgvmateriales.SelectedCells[0].RowIndex].Value.ToString();
+            txtdesc.Text = dgvmateriales[1, dgvmateriales.SelectedCells[0].RowIndex].Value.ToString();
+            txtcosto.Text = dgvmateriales[2, dgvmateriales.SelectedCells[0].RowIndex].Value.ToString();
+            txtcantidad.Text = dgvmateriales[3, dgvmateriales.SelectedCells[0].RowIndex].Value.ToString();
+
+        }
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private TextBox GetTxtcantidad()
+        {
+            return txtcantidad;
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e, TextBox txtcantidadText)
+        {
+            if (txtcosto.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Identificador de la Provincia", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtcosto.Focus();
+                return;
+            }
+            if (txtdesc.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Identificador de la Provincia", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtdesc.Focus();
+                return;
+            }
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Materiales_Servicio ( Descripcion, Costo, Cantidad_Stock) Values ( '" + txtdesc.Text.Trim() + "','" + txtcosto.Text.Trim() + "','" + txtcantidad.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Materiales_Servicio Set Descripcion = '" + txtdesc.Text.Trim() + "', Costo =  '" + txtcosto.Text.Trim() + "'  where Cantidad_Stock = '" + txtcantidad.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtdesc.Text = string.Empty;
+            txtcosto.Text = "";//Forma de Limpiar//
+            txtcantidad.Text = string.Empty;
+
+        }
+
+        private void txtcosto_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        private bool Esnumerico(char caracter)
+        {//para controlar que solo se digiten números
+            if ((caracter >= 48 && caracter <= 57) || (caracter == 8) || caracter == 32)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void txtcosto_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+        }
+
+        private void gpbregistrados_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void lblosto_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
+
+
+
+//*-------------------------------------------------Codigos de Nathaly para comparar EMPLEADO -------------------------------------------------------*/
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;  //Para trabajar con SQL
+
+
+/*Para trabajar con fechas y eso*/
+using System.Threading;
+using System.Globalization;
+
+namespace ProyectoFranklinInversores_24
+{
+    public partial class frmManEmp06 : Form
+    {
+
+        // Estamos creando objeto Command en base a clase Command
+        SqlCommand comando = new SqlCommand();
+
+        SqlConnection conexion = new SqlConnection("Data Source=LAPTOP-JMJJ73P7\\NATHALYEXPRESS;" +
+            " initial catalog=FranklinInversores; trusted_connection=yes");
+
+
+
+        private void RefrescarTabla()
+        {
+
+            dgvcliente.DataSource = null;
+            try
+            {
+                conexion.Open();
+                DataTable Datos = new DataTable();
+                SqlDataAdapter Adaptador = new SqlDataAdapter("Select * from Empleado", conexion);
+                Adaptador.Fill(Datos);
+                BindingSource FuenteDatos = new BindingSource();
+                FuenteDatos.DataSource = Datos;
+                dgvcliente.DataSource = FuenteDatos;
+            }
+            catch (Exception Error)
+            {
+                MessageBox.Show(Error.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1);
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+        public frmManEmp06()
+        {
+            InitializeComponent();
+        }
+
+        private void btnborrar_Click(object sender, EventArgs e)
+        {    //Investigo si el IdCliente está registrado en la tabla solicitud//
+            SqlDataReader lector;
+            comando.CommandText = "Select IdEmpleado from Compras where IdEmpleado = '" + txtid.Text + "'";
+            conexion.Open();
+            lector = comando.ExecuteReader(); //devuelve True or False
+            if ((lector.Read()))
+            {
+                conexion.Close();
+                MessageBox.Show("El registro no puede ser eliminado por tener transacciones", "Aviso", MessageBoxButtons.OK,
+                MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                lector.Close();
+
+                return; //Te saca del procedimiento donde nos encontramos
+                        //Y no ejecuta lo que esta debajo
+            }
+
+            else
+            {
+                conexion.Close();
+            }
+            EscribirDatos("Delete from Empleado where IdEmpleado= '" + txtid.Text + "'");
+            LimpiarObjetos();
+            RefrescarTabla();
+        }
+        private void EscribirDatos(string Parametro)
+        {
+
+            //Permite ejectuar las instrucciones recibidas en Parametro en la base de datos
+            comando.CommandText = Parametro;
+            conexion.Open();
+            comando.Transaction = conexion.BeginTransaction();
+            comando.ExecuteNonQuery();
+            comando.Transaction.Commit();
+            conexion.Close();
+        }
+
+        private void frmManEmp06_Load(object sender, EventArgs e)
+        {
+            //Este proceso se debe generar
+            txtfecha.Text = DateTime.Now.ToShortDateString();
+            RefrescarTabla(); //invoco procedimiento
+            txthora.Text = DateTime.Now.ToString("HH:mm");
+        }
+
+        private void dgvcliente_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Este proceso se debe generar
+            txtid.Text = dgvcliente[0, dgvcliente.SelectedCells[0].RowIndex].Value.ToString();
+            txtnom.Text = dgvcliente[1, dgvcliente.SelectedCells[0].RowIndex].Value.ToString();
+            txtape.Text = dgvcliente[2, dgvcliente.SelectedCells[0].RowIndex].Value.ToString();
+            txtdire.Text = dgvcliente[3, dgvcliente.SelectedCells[0].RowIndex].Value.ToString();
+            mtbtell.Text = dgvcliente[4, dgvcliente.SelectedCells[0].RowIndex].Value.ToString();
+            txtcedula.Text = dgvcliente[5, dgvcliente.SelectedCells[0].RowIndex].Value.ToString();
+
+        }
+
+        private void btnguardar_Click(object sender, EventArgs e)
+        {
+            if (mtbtell.MaskCompleted == false)
+            {
+                MessageBox.Show("Debes escribir el telefono ", "aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+                return;
+            }
+            //Investigo si los textbox tienen datos
+            if (txtnom.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Nombre del Empleado", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtnom.Focus();
+                return;
+            }
+            if (txtape.Text == "")
+            {
+                MessageBox.Show("Debes digitar el Apellido del Empleado", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtape.Focus();
+                return;
+            }
+            if (txtdire.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Dirección del Empleado", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtdire.Focus();
+                return;
+            }
+
+            if (txtcedula.Text == "")
+            {
+                MessageBox.Show("Debes digitar la Cédula del Empleado", "Aviso", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+                txtcedula.Focus();
+                return;
+            }
+
+
+
+
+            if (string.IsNullOrEmpty(txtid.Text))
+            {
+                //Agrego registro nuevo
+                EscribirDatos("Insert into Empleado ( Nombre,Apellido, Direccion,Telefono, Cedula) Values ( '" + txtnom.Text.Trim() + "','" + txtape.Text.Trim() + "','" + txtdire.Text.Trim() + "', '" + mtbtell.Text.Trim() + "','" + txtcedula.Text.Trim() + "')");
+                MessageBox.Show("Nuevo registro guardado", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+            }
+            else // para modificar registros//
+            {
+                //Modificar un registro existente
+                EscribirDatos("Update Empleado Set Nombre = '" + txtnom.Text.Trim() + "', Apellido =  '" + txtape.Text.Trim() +
+                 "', Direccion = '" + txtdire.Text.Trim() + "', Telefono = '" + mtbtell.Text.Trim() + "', Cedula = '" + txtcedula.Text.Trim() + "' where IdEmpleado = '" + txtid.Text + "'");
+
+            }
+            RefrescarTabla(); //Invoco Procedimiento//
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void frmManEmp06_Activated(object sender, EventArgs e)
+        {
+            comando.Connection = conexion;
+        }
+
+        private void LimpiarObjetos()
+        {   //Limpiar objetos en el formulario//
+            txtid.Text = string.Empty;
+            txtnom.Text = string.Empty;
+            txtape.Text = "";//Forma de Limpiar//
+            txtdire.Text = string.Empty;
+            mtbtell.Text = string.Empty;
+            txtcedula.Text = string.Empty;
+
+
+        }
+
+        private void btnlimpiar_Click(object sender, EventArgs e)
+        {
+            LimpiarObjetos();//Invoco Procedimiento//
+        }
+
+        private void btnretornar_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void lblcedula_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtdire_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtcedula_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        private bool Esnumerico(char caracter)
+        {//para controlar que solo se digiten números
+            if ((caracter >= 48 && caracter <= 57) || (caracter == 8) || caracter == 32)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private void txtcedula_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = Esnumerico(e.KeyChar);
+
+        }
+    }
+}
+
+
+
